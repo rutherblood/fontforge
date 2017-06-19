@@ -29,7 +29,6 @@
 // to get asprintf() defined from stdio.h on GNU platforms
 #define _GNU_SOURCE 1
 
-#include "ffglib.h"
 
 #include <fontforge-config.h>
 
@@ -569,13 +568,7 @@ static PyObject *PyFFFont_CollabSessionSetUpdatedCallback(PyFF_Font *self, PyObj
 
 #ifdef FONTFORGE_CAN_USE_GTK
 
-#define GDMenuItem GDMenuItem_Glib
-#define GTimer GTimer_GTK
-#define GList  GList_Glib
 #include <gdk/gdkx.h>
-#undef GTimer
-#undef GList
-#undef GDMenuItem
 
 
 static void GtkWindowToMainEventLoop_fd_callback( int fd, void* datas )

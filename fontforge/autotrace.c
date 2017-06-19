@@ -52,7 +52,6 @@
 #include <errno.h>		/* for errors */
 #include <dirent.h>		/* for opendir,etc. */
 
-#include "ffglib.h"
 
 int preferpotrace = false;
 

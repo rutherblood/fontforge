@@ -8647,7 +8647,7 @@ static void _CVMergeToLine(CharView *cv, int elide) {
     SplineCharMerge(cv->b.sc,&cv->b.layerheads[cv->b.drawmode]->splines,!elide);
 
     // Select the other side of the new curve
-    GList_Glib* gl = CVGetSelectedPoints( cv );
+    GList* gl = CVGetSelectedPoints( cv );
     if( g_list_first(gl) )
 	SPSelectPrevPoint( (SplinePoint*)g_list_first(gl)->data, 1 );
     g_list_free( gl );

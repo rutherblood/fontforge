@@ -29,7 +29,6 @@
 
 #include <fontforge-config.h>
 
-#include "ffglib.h"
 #include "baseviews.h"
 
 #include <ggadget.h>
@@ -961,7 +960,7 @@ extern int CVAnySelPoints(CharView *cv);
  * Get all the selected points in the current cv.
  * Caller must g_list_free() the returned value.
  */
-extern GList_Glib* CVGetSelectedPoints(CharView *cv);
+extern GList* CVGetSelectedPoints(CharView *cv);
 extern void CVSelectPointAt(CharView *cv);
 extern int CVClearSel(CharView *cv);
 extern int CVSetSel(CharView *cv,int mask);

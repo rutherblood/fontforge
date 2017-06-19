@@ -43,7 +43,6 @@
 #include <time.h>
 #include <unistd.h>
 #include <ustring.h>
-#include <ffglib.h>
 #include "utype.h"
 #include <sys/types.h>
 #if !defined(__MINGW32__)

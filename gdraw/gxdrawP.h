@@ -72,11 +72,9 @@ capable of using composite.
 #  include <cairo/cairo.h>
 #  include <cairo/cairo-xlib.h>
 # endif
-#  define GTimer GTimer_GTK
 #  include <ft2build.h>
 #  include <X11/Xft/Xft.h>
 #  include <pango/pango.h>
-#  undef GTimer
 #endif
 
 #include "gdrawP.h"

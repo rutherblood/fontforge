@@ -60,10 +60,8 @@
 #include <dirent.h>
 #include <limits.h>		/* For NAME_MAX or _POSIX_NAME_MAX */
 
-#define GDTimer GTimer_GTK
 #include <glib.h>
 #include <glib/gstdio.h>
-#undef GDTimer
 
 
 #ifndef NAME_MAX

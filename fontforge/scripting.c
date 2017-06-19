@@ -73,7 +73,6 @@
 #include <gfile.h>
 #include <utype.h>
 #include <ustring.h>
-#include <ffglib.h>
 #include <chardata.h>
 #include <unistd.h>
 #include <math.h>

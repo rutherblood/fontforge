@@ -111,7 +111,6 @@ extern int old_sfnt_flags;
 #include "collab/zmq_kvmsg.h"
 #endif
 #include "collabclient.h"
-#include "ffglib.h"
 
 extern int prefRevisionsToRetain;
 
@@ -1303,7 +1302,7 @@ static PyObject *PyFF_SpiroVersion(PyObject *UNUSED(self), PyObject *UNUSED(args
     return( ret );
 }
 
-GList_Glib* closingFunctionList = 0;
+GList* closingFunctionList = 0;
 
 static PyObject *PyFF_onAppClosing(PyObject *self, PyObject *args) {
     int cnt;

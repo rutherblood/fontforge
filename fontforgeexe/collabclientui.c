@@ -32,8 +32,9 @@
 #include "cvundoes.h"
 #include "sfd.h"
 #include "sfundo.h"
-#include "../fontforge/ffglib.h"
 #include "fontforgeexe.h"
+#include <glib.h>
+#include <glib-object.h>
 
 int  collabclient_setHaveLocalServer( int v );
 
