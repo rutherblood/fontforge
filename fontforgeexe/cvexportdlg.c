@@ -619,7 +619,7 @@ static int _Export(SplineChar *sc,BDFChar *bc,int layer) {
     gcd[6].gd.label = &cur_formats[_format];
     gcd[6].gd.u.list[0].selected = true;
     gcd[6].gd.handle_controlevent = GFD_Format;
-    gcd[6].creator = GListButtonCreate;
+    gcd[6].creator = GDListButtonCreate;
     for ( i=0; cur_formats[i].text!=NULL; ++i )
 	cur_formats[i].selected =false;
     cur_formats[_format].selected = true;

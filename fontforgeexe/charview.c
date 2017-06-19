@@ -12929,7 +12929,7 @@ CharView *CharViewCreateExtended(SplineChar *sc, FontView *fv,int enc, int show 
     gd.flags = gg_visible|gg_enabled|gg_pos_in_pixels|gg_text_xim;
     gd.handle_controlevent = CV_OnCharSelectorTextChanged;
     gd.u.list = cv_charselector_init;
-    cv->charselector = GListFieldCreate(cv->gw,&gd,cv);
+    cv->charselector = GDListFieldCreate(cv->gw,&gd,cv);
     CVSetCharSelectorValueFromSC( cv, sc );
     GGadgetSetSkipUnQualifiedHotkeyProcessing( cv->charselector, 1 );
 

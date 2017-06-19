@@ -709,7 +709,7 @@ static void _Import(CharView *cv,BitmapView *bv,FontView *fv) {
     gcd[5].gd.u.list = cur_formats;
     gcd[5].gd.label = &gcd[5].gd.u.list[format];
     gcd[5].gd.handle_controlevent = GFD_Format;
-    gcd[5].creator = GListButtonCreate;
+    gcd[5].creator = GDListButtonCreate;
     for ( i=0; i<sizeof(formats)/sizeof(formats[0]); ++i )
 	gcd[5].gd.u.list[i].selected = false;
     gcd[5].gd.u.list[format].selected = true;

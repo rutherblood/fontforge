@@ -1017,7 +1017,7 @@ void GWidgetCreateInsChar(void) {
     };
     static GGadgetCreateData gcd[] = {
         { GLabelCreate, { { 6, 6, 0, 0 }, NULL, 'e', 0, 0, 0, 0, &labels[0], { NULL }, gg_visible | gg_enabled | gg_pos_use0, NULL, NULL }, NULL, NULL },
-        { GListButtonCreate, { { 6, 21, 168, 0 }, NULL, 'e', 0, 0, 0, INSCHR_CharSet, NULL, { NULL }, gg_visible | gg_enabled | gg_pos_use0, NULL, NULL }, NULL, NULL },
+        { GDListButtonCreate, { { 6, 21, 168, 0 }, NULL, 'e', 0, 0, 0, INSCHR_CharSet, NULL, { NULL }, gg_visible | gg_enabled | gg_pos_use0, NULL, NULL }, NULL, NULL },
         { GLabelCreate, { { 6, 50, 0, 0 }, NULL, 'C', 0, 0, 0, 0, &labels[1], { NULL }, gg_visible | gg_enabled | gg_pos_use0, NULL, NULL }, NULL, NULL },
         /* gg_textarea_wrap means (here) that we should not invoke the InsChar Hook for selections */
         { GTextFieldCreate, { { 6, 64, 65, 0 }, NULL, 'C', 0, 0, 0, INSCHR_Char, NULL, { NULL }, gg_visible | gg_enabled | gg_pos_use0 | gg_textarea_wrap, NULL, NULL }, NULL, NULL },

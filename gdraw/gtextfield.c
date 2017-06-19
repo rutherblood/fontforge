@@ -80,8 +80,8 @@ static GResInfo gtextfield_ri = {
     NULL
 };
 static GGadgetCreateData textlist_gcd[] = {
-    { GListFieldCreate, { GRECT_EMPTY, NULL, 0, 0, 0, 0, 0, &text_lab[0], { list_choices }, gg_visible, NULL, NULL }, NULL, NULL },
-    { GListFieldCreate, { GRECT_EMPTY, NULL, 0, 0, 0, 0, 0, &text_lab[1], { list_choices }, gg_visible|gg_enabled, NULL, NULL }, NULL, NULL }
+    { GDListFieldCreate, { GRECT_EMPTY, NULL, 0, 0, 0, 0, 0, &text_lab[0], { list_choices }, gg_visible, NULL, NULL }, NULL, NULL },
+    { GDListFieldCreate, { GRECT_EMPTY, NULL, 0, 0, 0, 0, 0, &text_lab[1], { list_choices }, gg_visible|gg_enabled, NULL, NULL }, NULL, NULL }
 };
 static GGadgetCreateData *tlarray[] = { GCD_Glue, &textlist_gcd[0], GCD_Glue, &textlist_gcd[1], GCD_Glue, NULL, NULL };
 static GGadgetCreateData textlistbox =
@@ -169,7 +169,7 @@ static GResInfo numericfieldspinner_ri = {
 static unichar_t nullstr[] = { 0 }, nstr[] = { 'n', 0 },
 	newlinestr[] = { '\n', 0 }, tabstr[] = { '\t', 0 };
 
-static void GListFieldSelected(GGadget *g, int i);
+static void GDListFieldSelected(GGadget *g, int i);
 static int GTextField_Show(GTextField *gt, int pos);
 static void GTPositionGIC(GTextField *gt);
 
@@ -408,7 +408,7 @@ return( end );
 static int GTextField_Show(GTextField *gt, int pos) {
     int i, ll, xoff, loff;
     int refresh=false;
-    GListField *ge = (GListField *) gt;
+    GDListField *ge = (GDListField *) gt;
     int width = gt->g.inner.width;
 
     if ( gt->listfield || gt->numericfield )
@@ -1463,7 +1463,7 @@ static void GTextFieldDrawLine(GWindow pixmap, GTextField *gt, int line, Color f
 
 static int gtextfield_expose(GWindow pixmap, GGadget *g, GEvent *event) {
     GTextField *gt = (GTextField *) g;
-    GListField *ge = (GListField *) g;
+    GDListField *ge = (GDListField *) g;
     GRect old1, old2, *r = &g->r;
     Color fg;
     int ll,i, last;
@@ -1512,7 +1512,7 @@ return( false );
     gt_draw_cursor(pixmap, gt);
 
     if ( gt->listfield ) {
-	int marklen = GDrawPointsToPixels(pixmap,_GListMarkSize);
+	int marklen = GDrawPointsToPixels(pixmap,_GDListMarkSize);
 
 	GDrawPushClip(pixmap,&ge->buttonrect,&old1);
 
@@ -1520,7 +1520,7 @@ return( false );
 		g->state==gs_enabled? gs_pressedactive: g->state,false);
 	GBoxDrawBorder(pixmap,&ge->buttonrect,&glistfieldmenu_box,g->state,false);
 
-	GListMarkDraw(pixmap,
+	GDListMarkDraw(pixmap,
 		ge->buttonrect.x + (ge->buttonrect.width - marklen)/2,
 		g->inner.y,
 		g->inner.height,
@@ -1560,7 +1560,7 @@ return( false );
 return( true );
 }
 
-static int glistfield_mouse(GListField *ge, GEvent *event) {
+static int glistfield_mouse(GDListField *ge, GEvent *event) {
     if ( event->type!=et_mousedown )
 return( true );
     if ( ge->popup != NULL ) {
@@ -1568,12 +1568,12 @@ return( true );
 	ge->popup = NULL;
 return( true );
     }
-    ge->popup = GListPopupCreate(&ge->gt.g,GListFieldSelected,ge->ti);
+    ge->popup = GDListPopupCreate(&ge->gt.g,GDListFieldSelected,ge->ti);
 return( true );
 }
 
 static int gnumericfield_mouse(GTextField *gt, GEvent *event) {
-    GListField *ge = (GListField *) gt;
+    GDListField *ge = (GDListField *) gt;
     if ( event->type==et_mousedown ) {
 	gt->incr_down = event->u.mouse.y > (ge->buttonrect.y + ge->buttonrect.height/2);
 	GTextFieldIncrement(gt,gt->incr_down?-1:1);
@@ -1653,7 +1653,7 @@ return( false );
     
 static int gtextfield_mouse(GGadget *g, GEvent *event) {
     GTextField *gt = (GTextField *) g;
-    GListField *ge = (GListField *) g;
+    GDListField *ge = (GDListField *) g;
     unichar_t *end=NULL, *end1, *end2;
     int i=0,ll;
 
@@ -1805,8 +1805,8 @@ static int gtextfield_key(GGadget *g, GEvent *event) {
 
     if ( !g->takes_input || (g->state!=gs_enabled && g->state!=gs_active && g->state!=gs_focused ))
 return( false );
-    if ( gt->listfield && ((GListField *) gt)->popup!=NULL ) {
-	GWindow popup = ((GListField *) gt)->popup;
+    if ( gt->listfield && ((GDListField *) gt)->popup!=NULL ) {
+	GWindow popup = ((GDListField *) gt)->popup;
 	(GDrawGetEH(popup))(popup,event);
 return( true );
     }
@@ -2009,7 +2009,7 @@ static void gtextfield_destroy(GGadget *g) {
     if ( gt==NULL )
 return;
     if ( gt->listfield ) {
-	GListField *glf = (GListField *) g;
+	GDListField *glf = (GDListField *) g;
 	if ( glf->popup ) {
 	    GDrawDestroyWindow(glf->popup);
 	    GDrawSync(NULL);
@@ -2099,8 +2099,8 @@ void GTextFieldReplace(GGadget *g,const unichar_t *txt) {
     _ggadget_redraw(g);
 }
 
-static void GListFSelectOne(GGadget *g, int32 pos) {
-    GListField *gl = (GListField *) g;
+static void GDListFSelectOne(GGadget *g, int32 pos) {
+    GDListField *gl = (GDListField *) g;
     int i;
 
     for ( i=0; i<gl->ltot; ++i )
@@ -2113,8 +2113,8 @@ static void GListFSelectOne(GGadget *g, int32 pos) {
     }
 }
 
-static int32 GListFIsSelected(GGadget *g, int32 pos) {
-    GListField *gl = (GListField *) g;
+static int32 GDListFIsSelected(GGadget *g, int32 pos) {
+    GDListField *gl = (GDListField *) g;
 
     if ( pos>=gl->ltot )
 return( false );
@@ -2126,9 +2126,9 @@ return( gl->ti[pos]->selected );
 return( false );
 }
 
-static int32 GListFGetFirst(GGadget *g) {
+static int32 GDListFGetFirst(GGadget *g) {
     int i;
-    GListField *gl = (GListField *) g;
+    GDListField *gl = (GDListField *) g;
 
     for ( i=0; i<gl->ltot; ++i )
 	if ( gl->ti[i]->selected )
@@ -2137,22 +2137,22 @@ return( i );
 return( -1 );
 }
 
-static GTextInfo **GListFGet(GGadget *g,int32 *len) {
-    GListField *gl = (GListField *) g;
+static GTextInfo **GDListFGet(GGadget *g,int32 *len) {
+    GDListField *gl = (GDListField *) g;
     if ( len!=NULL ) *len = gl->ltot;
 return( gl->ti );
 }
 
-static GTextInfo *GListFGetItem(GGadget *g,int32 pos) {
-    GListField *gl = (GListField *) g;
+static GTextInfo *GDListFGetItem(GGadget *g,int32 pos) {
+    GDListField *gl = (GDListField *) g;
     if ( pos<0 || pos>=gl->ltot )
 return( NULL );
 
 return(gl->ti[pos]);
 }
 
-static void GListFSet(GGadget *g,GTextInfo **ti,int32 docopy) {
-    GListField *gl = (GListField *) g;
+static void GDListFSet(GGadget *g,GTextInfo **ti,int32 docopy) {
+    GDListField *gl = (GDListField *) g;
 
     GTextInfoArrayFree(gl->ti);
     if ( docopy || ti==NULL )
@@ -2161,8 +2161,8 @@ static void GListFSet(GGadget *g,GTextInfo **ti,int32 docopy) {
     gl->ltot = GTextInfoArrayCount(ti);
 }
 
-static void GListFClear(GGadget *g) {
-    GListFSet(g,NULL,true);
+static void GDListFClear(GGadget *g) {
+    GDListFSet(g,NULL,true);
 }
 
 static void gtextfield_redraw(GGadget *g) {
@@ -2179,10 +2179,10 @@ static void gtextfield_move(GGadget *g, int32 x, int32 y ) {
     int fxo=0, fyo=0, bxo, byo;
 
     if ( gt->listfield || gt->numericfield ) {
-	fxo = ((GListField *) gt)->fieldrect.x - g->r.x;
-	fyo = ((GListField *) gt)->fieldrect.y - g->r.y;
-	bxo = ((GListField *) gt)->buttonrect.x - g->r.x;
-	byo = ((GListField *) gt)->buttonrect.y - g->r.y;
+	fxo = ((GDListField *) gt)->fieldrect.x - g->r.x;
+	fyo = ((GDListField *) gt)->fieldrect.y - g->r.y;
+	bxo = ((GDListField *) gt)->buttonrect.x - g->r.x;
+	byo = ((GDListField *) gt)->buttonrect.y - g->r.y;
     }
     if ( gt->vsb!=NULL )
 	_ggadget_move((GGadget *) (gt->vsb),x+(gt->vsb->g.r.x-g->r.x),y);
@@ -2190,10 +2190,10 @@ static void gtextfield_move(GGadget *g, int32 x, int32 y ) {
 	_ggadget_move((GGadget *) (gt->hsb),x,y+(gt->hsb->g.r.y-g->r.y));
     _ggadget_move(g,x,y);
     if ( gt->listfield || gt->numericfield ) {
-	((GListField *) gt)->fieldrect.x = g->r.x + fxo;
-	((GListField *) gt)->fieldrect.y = g->r.y + fyo;
-	((GListField *) gt)->buttonrect.x = g->r.x + bxo;
-	((GListField *) gt)->buttonrect.y = g->r.y + byo;
+	((GDListField *) gt)->fieldrect.x = g->r.x + fxo;
+	((GDListField *) gt)->fieldrect.y = g->r.y + fyo;
+	((GDListField *) gt)->buttonrect.x = g->r.x + bxo;
+	((GDListField *) gt)->buttonrect.y = g->r.y + byo;
     }
 }
 
@@ -2204,11 +2204,11 @@ static void gtextfield_resize(GGadget *g, int32 width, int32 height ) {
     int l;
 
     if ( gt->listfield || gt->numericfield ) {
-	fxo = ((GListField *) gt)->fieldrect.x - g->r.x;
-	fwo = g->r.width - ((GListField *) gt)->fieldrect.width;
-	fyo = ((GListField *) gt)->fieldrect.y - g->r.y;
-	bxo = g->r.x+g->r.width - ((GListField *) gt)->buttonrect.x;
-	byo = ((GListField *) gt)->buttonrect.y - g->r.y;
+	fxo = ((GDListField *) gt)->fieldrect.x - g->r.x;
+	fwo = g->r.width - ((GDListField *) gt)->fieldrect.width;
+	fyo = ((GDListField *) gt)->fieldrect.y - g->r.y;
+	bxo = g->r.x+g->r.width - ((GDListField *) gt)->buttonrect.x;
+	byo = ((GDListField *) gt)->buttonrect.y - g->r.y;
     }
     if ( gt->hsb!=NULL ) {
 	oldheight = gt->hsb->g.r.y+gt->hsb->g.r.height-g->r.y;
@@ -2245,11 +2245,11 @@ static void gtextfield_resize(GGadget *g, int32 width, int32 height ) {
 	}
     }
     if ( gt->listfield || gt->numericfield) {
-	((GListField *) gt)->fieldrect.x = g->r.x + fxo;
-	((GListField *) gt)->fieldrect.width = g->r.width -fwo;
-	((GListField *) gt)->fieldrect.y = g->r.y + fyo;
-	((GListField *) gt)->buttonrect.x = g->r.x+g->r.width - bxo;
-	((GListField *) gt)->buttonrect.y = g->r.y + byo;
+	((GDListField *) gt)->fieldrect.x = g->r.x + fxo;
+	((GDListField *) gt)->fieldrect.width = g->r.width -fwo;
+	((GDListField *) gt)->fieldrect.y = g->r.y + fyo;
+	((GDListField *) gt)->buttonrect.x = g->r.x+g->r.width - bxo;
+	((GDListField *) gt)->buttonrect.y = g->r.y + byo;
     }
 }
 
@@ -2371,12 +2371,12 @@ static void GTextFieldSetDesiredSize(GGadget *g,GRect *outer,GRect *inner) {
 	int extra=0;
 
 	if ( gt->listfield ) {
-	    extra = GDrawPointsToPixels(gt->g.base,_GListMarkSize) +
+	    extra = GDrawPointsToPixels(gt->g.base,_GDListMarkSize) +
 		    GDrawPointsToPixels(gt->g.base,_GGadget_TextImageSkip) +
-		    2*GBoxBorderWidth(gt->g.base,&_GListMark_Box) +
+		    2*GBoxBorderWidth(gt->g.base,&_GDListMark_Box) +
 		    GBoxBorderWidth(gt->g.base,&glistfieldmenu_box);
 	} else if ( gt->numericfield ) {
-	    extra = GDrawPointsToPixels(gt->g.base,_GListMarkSize)/2 +
+	    extra = GDrawPointsToPixels(gt->g.base,_GDListMarkSize)/2 +
 		    GDrawPointsToPixels(gt->g.base,_GGadget_TextImageSkip) +
 		    2*GBoxBorderWidth(gt->g.base,&gnumericfieldspinner_box);
 	}
@@ -2399,12 +2399,12 @@ static void GTextFieldGetDesiredSize(GGadget *g,GRect *outer,GRect *inner) {
     int bp = GBoxBorderWidth(g->base,g->box);
 
     if ( gt->listfield ) {
-	extra = GDrawPointsToPixels(gt->g.base,_GListMarkSize) +
+	extra = GDrawPointsToPixels(gt->g.base,_GDListMarkSize) +
 		GDrawPointsToPixels(gt->g.base,_GGadget_TextImageSkip) +
-		2*GBoxBorderWidth(gt->g.base,&_GListMark_Box) +
+		2*GBoxBorderWidth(gt->g.base,&_GDListMark_Box) +
 		GBoxBorderWidth(gt->g.base,&glistfieldmenu_box);
     } else if ( gt->numericfield ) {
-	extra = GDrawPointsToPixels(gt->g.base,_GListMarkSize)/2 +
+	extra = GDrawPointsToPixels(gt->g.base,_GDListMarkSize)/2 +
 		GDrawPointsToPixels(gt->g.base,_GGadget_TextImageSkip) +
 		2*GBoxBorderWidth(gt->g.base,&gnumericfieldspinner_box);
     }
@@ -2520,14 +2520,14 @@ struct gfuncs glistfield_funcs = {
     GTextFieldSetFont,
     GTextFieldGetFont,
 
-    GListFClear,
-    GListFSet,
-    GListFGet,
-    GListFGetItem,
+    GDListFClear,
+    GDListFSet,
+    GDListFGet,
+    GDListFGetItem,
     NULL,
-    GListFSelectOne,
-    GListFIsSelected,
-    GListFGetFirst,
+    GDListFSelectOne,
+    GDListFIsSelected,
+    GDListFGetFirst,
     NULL,
     NULL,
     NULL,
@@ -2634,11 +2634,11 @@ static void GTextFieldFit(GTextField *gt) {
     if ( gt->g.r.width==0 ) {
 	int extra=0;
 	if ( gt->listfield ) {
-	    extra = GDrawPointsToPixels(gt->g.base,_GListMarkSize) +
+	    extra = GDrawPointsToPixels(gt->g.base,_GDListMarkSize) +
 		    2*GDrawPointsToPixels(gt->g.base,_GGadget_TextImageSkip) +
-		    GBoxBorderWidth(gt->g.base,&_GListMark_Box);
+		    GBoxBorderWidth(gt->g.base,&_GDListMark_Box);
 	} else if ( gt->numericfield ) {
-	    extra = GDrawPointsToPixels(gt->g.base,_GListMarkSize)/2 +
+	    extra = GDrawPointsToPixels(gt->g.base,_GDListMarkSize)/2 +
 		    GDrawPointsToPixels(gt->g.base,_GGadget_TextImageSkip) +
 		    2*GBoxBorderWidth(gt->g.base,&gnumericfieldspinner_box);
 	}
@@ -2664,15 +2664,15 @@ static void GTextFieldFit(GTextField *gt) {
 	    GTextFieldAddHSb(gt);
     }
     if ( gt->listfield || gt->numericfield ) {
-	GListField *ge = (GListField *) gt;
+	GDListField *ge = (GDListField *) gt;
 	int extra;
 	if ( gt->listfield )
-	    extra = GDrawPointsToPixels(gt->g.base,_GListMarkSize) +
+	    extra = GDrawPointsToPixels(gt->g.base,_GDListMarkSize) +
 		    GDrawPointsToPixels(gt->g.base,_GGadget_TextImageSkip) +
-		    2*GBoxBorderWidth(gt->g.base,&_GListMark_Box)+
+		    2*GBoxBorderWidth(gt->g.base,&_GDListMark_Box)+
 		    GBoxBorderWidth(gt->g.base,&glistfieldmenu_box);
 	else {
-	    extra = GDrawPointsToPixels(gt->g.base,_GListMarkSize)/2 +
+	    extra = GDrawPointsToPixels(gt->g.base,_GDListMarkSize)/2 +
 		    GDrawPointsToPixels(gt->g.base,_GGadget_TextImageSkip) +
 		    2*GBoxBorderWidth(gt->g.base,&gnumericfieldspinner_box);
 	}
@@ -2767,8 +2767,8 @@ GGadget *GTextAreaCreate(struct gwindow *base, GGadgetData *gd,void *data) {
 return( &gt->g );
 }
 
-static void GListFieldSelected(GGadget *g, int i) {
-    GListField *ge = (GListField *) g;
+static void GDListFieldSelected(GGadget *g, int i) {
+    GDListField *ge = (GDListField *) g;
 
     ge->popup = NULL;
     _GWidget_ClearGrabGadget(&ge->gt.g);
@@ -2781,7 +2781,7 @@ return;
 }
 
 GGadget *GSimpleListFieldCreate(struct gwindow *base, GGadgetData *gd,void *data) {
-    GListField *ge = calloc(1,sizeof(GListField));
+    GDListField *ge = calloc(1,sizeof(GDListField));
 
     ge->gt.listfield = true;
     if ( gd->u.list!=NULL )
@@ -2791,7 +2791,7 @@ GGadget *GSimpleListFieldCreate(struct gwindow *base, GGadgetData *gd,void *data
 return( &ge->gt.g );
 }
 
-static unichar_t **GListField_NameCompletion(GGadget *t,int from_tab) {
+static unichar_t **GDListField_NameCompletion(GGadget *t,int from_tab) {
     const unichar_t *spt; unichar_t **ret;
     GTextInfo **ti;
     int32 len;
@@ -2823,8 +2823,8 @@ return( NULL );
 return( ret );
 }
 
-GGadget *GListFieldCreate(struct gwindow *base, GGadgetData *gd,void *data) {
-    GListField *ge = calloc(1,sizeof(GCompletionField));
+GGadget *GDListFieldCreate(struct gwindow *base, GGadgetData *gd,void *data) {
+    GDListField *ge = calloc(1,sizeof(GCompletionField));
 
     ge->gt.listfield = true;
     if ( gd->u.list!=NULL )
@@ -2832,7 +2832,7 @@ GGadget *GListFieldCreate(struct gwindow *base, GGadgetData *gd,void *data) {
     ge->gt.accepts_tabs = true;
     ge->gt.completionfield = true;
     /* ge->gt.was_completing = true; */
-    ((GCompletionField *) ge)->completion = GListField_NameCompletion;
+    ((GCompletionField *) ge)->completion = GDListField_NameCompletion;
     _GTextFieldCreate(&ge->gt,base,gd,data,&_GGadget_gtextfield_box);
     ge->gt.g.funcs = &glistfield_funcs;
 return( &ge->gt.g );

@@ -68,7 +68,7 @@ return( ffdata );
 return( (void *) g_object_get_data (G_OBJECT (widget), "ffdata") );
 }
 
-static GList *pixmaps_directories = NULL;
+static GDList *pixmaps_directories = NULL;
 
 /* Use this function to set the directory containing installed pixmaps. */
 void
@@ -82,7 +82,7 @@ add_pixmap_directory                   (const gchar     *directory)
 static gchar*
 find_pixmap_file                       (const gchar     *filename)
 {
-  GList *elem;
+  GDList *elem;
 
   /* We step through each of the pixmaps directory to find it. */
   elem = pixmaps_directories;

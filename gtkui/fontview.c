@@ -3411,7 +3411,7 @@ void FontViewMenu_ActivateView(GtkMenuItem *menuitem, gpointer user_data) {
     SplineFont *sf = fv->b.sf;
     EncMap *map = fv->b.map;
     GtkWidget *menu = gtk_menu_item_get_submenu(menuitem);
-    GList *kids, *next;
+    GDList *kids, *next;
     static int sizes[] = { 24, 36, 48, 72, 96, 0 };
     char buffer[60];
 
@@ -3514,7 +3514,7 @@ void FontViewMenu_ActivateCID(GtkMenuItem *menuitem, gpointer user_data) {
     int j;
     SplineFont *sub, *cidmaster = fv->b.cidmaster;
     GtkWidget *menu = gtk_menu_item_get_submenu(menuitem);
-    GList *kids, *next;
+    GDList *kids, *next;
 
     /* First remove anything we might have added previously */
     for ( kids = GTK_MENU_SHELL(menu)->children; kids!=NULL; kids = next ) {
@@ -3574,7 +3574,7 @@ void FontViewMenu_ActivateMM(GtkMenuItem *menuitem, gpointer user_data) {
     MMSet *mm = fv->b.sf->mm;
     SplineFont *sub;
     GtkWidget *menu = gtk_menu_item_get_submenu(menuitem);
-    GList *kids, *next;
+    GDList *kids, *next;
 
     /* First remove anything we might have added previously */
     for ( kids = GTK_MENU_SHELL(menu)->children; kids!=NULL; kids = next ) {

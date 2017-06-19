@@ -27,7 +27,7 @@ struct _GwwVMenuBar
   GtkWidget *extra_arrow;
   GtkWidget *extra_menu;
 
-  GList *children;
+  GDList *children;
   gint   child_last;		/* Last child currently visible */
   guint  extra_active: 1;
 };

@@ -28,7 +28,7 @@ static void gww_vmenu_bar_size_request (GtkWidget      *widget,
     GtkRequisition child_requisition;
     gint ipadding;
     GtkWidget *child;
-    GList *children;
+    GDList *children;
 
     g_return_if_fail (GWW_IS_VMENU_BAR (widget));
     g_return_if_fail (requisition != NULL);
@@ -71,7 +71,7 @@ static void gww_vmenu_bar_size_allocate (GtkWidget     *widget,
 					GtkAllocation *allocation) {
     GwwVMenuBar *vmenu_bar;
     GtkRequisition arrow_requisition, child_requisition;
-    GList *children;
+    GDList *children;
     gint i, goodi, extra_active;
     gint width, total_width;
     gint ipadding;

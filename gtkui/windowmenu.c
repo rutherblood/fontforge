@@ -57,7 +57,7 @@ static void AddMI(GtkMenuShell *shell,GtkWidget *current, GtkWidget *cur,
 void Menu_ActivateWindows(GtkMenuItem *menuitem, gpointer user_data) {
     GtkWidget *current = gtk_widget_get_toplevel( GTK_WIDGET( menuitem ));
     int i;
-    GList *sub;
+    GDList *sub;
     GtkMenuShell *shell;
     FontView *fv;
     CharView *cv;
@@ -100,7 +100,7 @@ static void RecentSelect(GtkMenuItem *menuitem, gpointer user_data) {
 
 void RecentMenuBuild(GtkMenuItem *menuitem, gpointer user_data) {
     int i;
-    GList *sub;
+    GDList *sub;
     GtkWidget *shell;
     FontView *fv;
 
@@ -158,7 +158,7 @@ return;
 
 void ScriptMenuBuild(GtkMenuItem *menuitem, gpointer user_data) {
     int i;
-    GList *sub;
+    GDList *sub;
     GtkMenuShell *shell;
 
     if ( script_menu_names[0]==NULL )
@@ -190,7 +190,7 @@ return;
 void _aplistbuild(GtkMenuItem *menuitem,SplineFont *sf,
 	void (*func)(GtkMenuItem *menuitem, gpointer user_data)) {
     AnchorClass *ac;
-    GList *sub;
+    GDList *sub;
     GtkWidget *shell;
     GtkWidget *w;
 

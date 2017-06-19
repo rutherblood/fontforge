@@ -1803,7 +1803,7 @@ static void GResEditDlg(GResInfo *all,const char *def_res_file,void (*change_res
 	    gcd[k].gd.cid = tofree[i].btcid = ++cid;
 	    gcd[k].gd.handle_controlevent = GRE_ListChanged;
 	    gcd[k].data = &res->boxdata->border_type;
-	    gcd[k++].creator = GListButtonCreate;
+	    gcd[k++].creator = GDListButtonCreate;
 	    tofree[i].carray[l][2] = &gcd[k-1];
 	    tofree[i].carray[l][3] = GCD_ColSpan;
 	    if ( res->inherits_from==NULL )
@@ -1839,7 +1839,7 @@ static void GResEditDlg(GResInfo *all,const char *def_res_file,void (*change_res
 	    gcd[k].gd.cid = ++cid;
 	    gcd[k].gd.handle_controlevent = GRE_ListChanged;
 	    gcd[k].data = &res->boxdata->border_shape;
-	    gcd[k++].creator = GListButtonCreate;
+	    gcd[k++].creator = GDListButtonCreate;
 	    tofree[i].carray[l][6] = &gcd[k-1];
 	    if ( res->inherits_from==NULL )
 		gcd[k-3].gd.flags &= ~gg_enabled;
@@ -2492,8 +2492,8 @@ void GResEdit(GResInfo *additional,const char *def_res_file,void (*change_res_fi
 	for ( re_end = _GRadioRIHead(); re_end->next!=NULL; re_end = re_end->next );
 	re_end->next = _GTextFieldRIHead();
 	for ( re_end = _GTextFieldRIHead(); re_end->next!=NULL; re_end = re_end->next );
-	re_end->next = _GListRIHead();
-	for ( re_end = _GListRIHead(); re_end->next!=NULL; re_end = re_end->next );
+	re_end->next = _GDListRIHead();
+	for ( re_end = _GDListRIHead(); re_end->next!=NULL; re_end = re_end->next );
 	re_end->next = _GScrollBarRIHead();
 	for ( re_end = _GScrollBarRIHead(); re_end->next!=NULL; re_end = re_end->next );
 	re_end->next = _GLineRIHead();
