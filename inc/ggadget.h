@@ -58,7 +58,7 @@ typedef struct gtextinfo {
 						/* should really be in menuitem, but that wastes space and complicates GTextInfoDraw */
     char* text_untranslated;                    /* used to simplify hotkey lookup for menus. */
     /* 
-     * text_untranslated is either the GMenuItem2 shortcut or the GTextInfo prior
+     * text_untranslated is either the GDMenuItem2 shortcut or the GTextInfo prior
      * to translation occurring. The shortcut text is considered first
      * to allow the code to make the value explicit. This is useful in
      * cases where the menu text to be translated (GTextInfo.text
@@ -68,7 +68,7 @@ typedef struct gtextinfo {
      * See HKTextInfoToUntranslatedText() for stripping out any
      * potential underscore and the trailing "|Rest" string.
      *
-     * Using a pointer like this relies on the GMenuItems used to make
+     * Using a pointer like this relies on the GDMenuItems used to make
      * the menus are a static structure that outlasts the
      * menu/gtextinfo itself.
      **/
@@ -109,7 +109,7 @@ typedef struct gmenuitem {
     void (*moveto)(struct gwindow *base,struct gmenuitem *mi,GEvent *);	/* called before creating submenu */
     void (*invoke)(struct gwindow *base,struct gmenuitem *mi,GEvent *);	/* called on mouse release */
     int mid;
-} GMenuItem;
+} GDMenuItem;
 
 #define GMENUITEM_LINE   { { NULL, NULL, COLOR_DEFAULT, COLOR_DEFAULT, NULL, NULL, 0, 1, 0, 0, 0, 1, 0, 0, 0, '\0' }, '\0', 0, NULL, NULL, NULL, 0 }
 #define GMENUITEM_EMPTY { GTEXTINFO_EMPTY, '\0', 0, NULL, NULL, NULL, 0 }
@@ -122,7 +122,7 @@ typedef struct gmenuitem2 {
     void (*moveto)(struct gwindow *base,struct gmenuitem *mi,GEvent *);	/* called before creating submenu */
     void (*invoke)(struct gwindow *base,struct gmenuitem *mi,GEvent *);	/* called on mouse release */
     int mid;
-} GMenuItem2;
+} GDMenuItem2;
 
 #define GMENUITEM2_LINE { { NULL, NULL, COLOR_DEFAULT, COLOR_DEFAULT, NULL, NULL, 0, 1, 0, 0, 0, 1, 0, 0, 0, '\0' }, NULL, NULL, NULL, NULL, 0 }
 #define GMENUITEM2_EMPTY { GTEXTINFO_EMPTY, NULL, NULL, NULL, NULL, 0 }
@@ -224,8 +224,8 @@ typedef struct ggadgetdata {
     union {
 	GTextInfo *list;	/* for List Widgets (and ListButtons, RowCols etc) */
 	GTabInfo *tabs;		/* for Tab Widgets */
-	GMenuItem *menu;	/* for menus */
-	GMenuItem2 *menu2;	/* for menus (alternate) */
+	GDMenuItem *menu;	/* for menus */
+	GDMenuItem2 *menu2;	/* for menus (alternate) */
 	struct ggadgetcreatedata **boxelements;	/* An array of things to go in the box */
 	struct matrixinit *matrix;
 	GDrawEH drawable_e_h;	/* Drawable event handler */
@@ -276,7 +276,7 @@ struct col_init {
     enum me_type me_type;
     char *(*func)(GGadget *,int r,int c);
     GTextInfo *enum_vals;
-    void (*enable_enum)(GGadget *,GMenuItem *, int r, int c);
+    void (*enable_enum)(GGadget *,GDMenuItem *, int r, int c);
     char *title;
 };
 
@@ -524,7 +524,7 @@ void GMatrixEditAddButtons(GGadget *g, GGadgetCreateData *gcd);
 void GMatrixEditEnableColumn(GGadget *g, int col, int enabled);
 void GMatrixEditShowColumn(GGadget *g, int col, int visible);
 void GMatrixEditSetColumnChoices(GGadget *g, int col, GTextInfo *ti);
-GMenuItem *GMatrixEditGetColumnChoices(GGadget *g, int col);
+GDMenuItem *GMatrixEditGetColumnChoices(GGadget *g, int col);
 void GMatrixEditSetColumnCompletion(GGadget *g, int col, GTextCompletionHandler completion);
 void GMatrixEditSetEditable(GGadget *g, int editable);
 
@@ -549,11 +549,11 @@ int GGadgetWildMatch(unichar_t *pattern, unichar_t *name,int ignorecase);
 enum fchooserret GFileChooserDefFilter(GGadget *g,struct gdirentry *ent,
 	const unichar_t *dir);
 
-GWindow GMenuCreatePopupMenu(GWindow owner,GEvent *event, GMenuItem *mi);
-GWindow GMenuCreatePopupMenuWithName(GWindow owner,GEvent *event, char* subMenuName,GMenuItem *mi);
-GWindow _GMenuCreatePopupMenu(GWindow owner,GEvent *event, GMenuItem *mi,
+GWindow GMenuCreatePopupMenu(GWindow owner,GEvent *event, GDMenuItem *mi);
+GWindow GMenuCreatePopupMenuWithName(GWindow owner,GEvent *event, char* subMenuName,GDMenuItem *mi);
+GWindow _GMenuCreatePopupMenu(GWindow owner,GEvent *event, GDMenuItem *mi,
 			      void (*donecallback)(GWindow owner));
-GWindow _GMenuCreatePopupMenuWithName(GWindow owner,GEvent *event, GMenuItem *mi,
+GWindow _GMenuCreatePopupMenuWithName(GWindow owner,GEvent *event, GDMenuItem *mi,
 				      char* subMenuName, 
 				      void (*donecallback)(GWindow owner));
 
@@ -616,17 +616,17 @@ extern int GetInt8(GWindow gw,int cid,char *namer,int *err);
 extern int GetUnicodeChar8(GWindow gw,int cid,char *namer,int *err);
 extern void GGadgetProtest8(char *labelr);
 
-extern void GMenuItemParseShortCut(GMenuItem *mi,char *shortcut);
-extern int GMenuItemParseMask(char *shortcut);
+extern void GDMenuItemParseShortCut(GDMenuItem *mi,char *shortcut);
+extern int GDMenuItemParseMask(char *shortcut);
 extern int GGadgetUndoMacEnglishOptionCombinations(GEvent *event);
 
 /* Among other things, this routine sets global icon cache up. */
 extern void GGadgetInit(void);
 extern int GGadgetWithin(GGadget *g, int x, int y);
-extern void GMenuItemArrayFree(GMenuItem *mi);
-extern void GMenuItem2ArrayFree(GMenuItem2 *mi);
-extern GMenuItem *GMenuItemArrayCopy(GMenuItem *mi, uint16 *cnt);
-extern GMenuItem *GMenuItem2ArrayCopy(GMenuItem2 *mi, uint16 *cnt);
+extern void GDMenuItemArrayFree(GDMenuItem *mi);
+extern void GDMenuItem2ArrayFree(GDMenuItem2 *mi);
+extern GDMenuItem *GDMenuItemArrayCopy(GDMenuItem *mi, uint16 *cnt);
+extern GDMenuItem *GDMenuItem2ArrayCopy(GDMenuItem2 *mi, uint16 *cnt);
 
 extern void GVisibilityBoxSetToMinWH(GGadget *g);
 

@@ -1369,7 +1369,7 @@ return( true );
 #define MID_AutoKernCol		1005
 #define MID_AutoKernAll		1006
 
-static void kernmenu_dispatch(GWindow gw, GMenuItem *mi, GEvent *e) {
+static void kernmenu_dispatch(GWindow gw, GDMenuItem *mi, GEvent *e) {
     KernClassDlg *kcd = GDrawGetUserData(gw);
     int i;
 
@@ -1412,7 +1412,7 @@ static void kernmenu_dispatch(GWindow gw, GMenuItem *mi, GEvent *e) {
     GDrawRequestExpose(kcd->gw,NULL,false);
 }
 
-static GMenuItem kernpopupmenu[] = {
+static GDMenuItem kernpopupmenu[] = {
     { { (unichar_t *) N_("AutoKern Row"), NULL, COLOR_DEFAULT, COLOR_DEFAULT, NULL, NULL, 0, 0, 0, 0, 0, 0, 1, 1, 0, 't' }, '\0', ksm_control, NULL, NULL, kernmenu_dispatch, MID_AutoKernRow },
     { { (unichar_t *) N_("AutoKern Column"), NULL, COLOR_DEFAULT, COLOR_DEFAULT, NULL, NULL, 0, 0, 0, 0, 0, 0, 1, 1, 0, 't' }, '\0', ksm_control, NULL, NULL, kernmenu_dispatch, MID_AutoKernCol },
     { { (unichar_t *) N_("AutoKern All"), NULL, COLOR_DEFAULT, COLOR_DEFAULT, NULL, NULL, 0, 0, 0, 0, 0, 0, 1, 1, 0, 't' }, '\0', ksm_control, NULL, NULL, kernmenu_dispatch, MID_AutoKernAll },

@@ -1290,8 +1290,8 @@ static GTextInfo codepagenames[] = {
     GTEXTINFO_EMPTY
 };
 static char *TN_DefaultName(GGadget *g, int r, int c);
-static void TN_StrIDEnable(GGadget *g,GMenuItem *mi, int r, int c);
-static void TN_LangEnable(GGadget *g,GMenuItem *mi, int r, int c);
+static void TN_StrIDEnable(GGadget *g,GDMenuItem *mi, int r, int c);
+static void TN_LangEnable(GGadget *g,GDMenuItem *mi, int r, int c);
 static struct col_init ci[] = {
     { me_enum, NULL, mslanguages, TN_LangEnable, N_("Language") },
     { me_enum, NULL, ttfnameids, TN_StrIDEnable, N_("String ID") },
@@ -1343,7 +1343,7 @@ static GTextInfo layertype[] = {
     { (unichar_t *) N_("Layer|Background"), NULL, 0, 0, (void *) 1, NULL, 0, 0, 0, 0, 0, 0, 1, 0, 0, '\0'},
     GTEXTINFO_EMPTY
 };
-static void Layers_BackgroundEnable(GGadget *g,GMenuItem *mi, int r, int c);
+static void Layers_BackgroundEnable(GGadget *g,GDMenuItem *mi, int r, int c);
 static struct col_init layersci[] = {
     { me_string, NULL, NULL, NULL, N_("Layer Name") },
     { me_enum  , NULL, splineorder, NULL, N_("Curve Type") },
@@ -1869,7 +1869,7 @@ static GTextInfo psprivate_nameids[] = {
     GTEXTINFO_EMPTY
 };
 
-static void PI_KeyEnable(GGadget *g,GMenuItem *mi, int r, int c) {
+static void PI_KeyEnable(GGadget *g,GDMenuItem *mi, int r, int c) {
     int i,j, rows;
     struct matrix_data *strings = _GMatrixEditGet(g, &rows);
     int cols = GMatrixEditGetColCnt(g);
@@ -2954,7 +2954,7 @@ return( changed );
 #define MID_MultiEdit	2
 #define MID_Delete	3
 
-static void TN_StrPopupDispatch(GWindow gw, GMenuItem *mi, GEvent *e) {
+static void TN_StrPopupDispatch(GWindow gw, GDMenuItem *mi, GEvent *e) {
     struct gfi_data *d = GDrawGetUserData(GDrawGetParentWindow(gw));
     GGadget *g = GWidgetGetControl(d->gw,CID_TNames);
 
@@ -2981,7 +2981,7 @@ static void TN_StrPopupDispatch(GWindow gw, GMenuItem *mi, GEvent *e) {
 }
 
 static int menusort(const void *m1, const void *m2) {
-    const GMenuItem *mi1 = m1, *mi2 = m2;
+    const GDMenuItem *mi1 = m1, *mi2 = m2;
 
     /* Should do a strcoll here, but I never wrote one */
     if ( mi1->ti.text_is_1byte && mi2->ti.text_is_1byte )
@@ -2990,7 +2990,7 @@ return( strcoll( (char *) (mi1->ti.text), (char *) (mi2->ti.text)) );
 return( u_strcmp(mi1->ti.text,mi2->ti.text));
 }
 
-static void TN_StrIDEnable(GGadget *g,GMenuItem *mi, int r, int c) {
+static void TN_StrIDEnable(GGadget *g,GDMenuItem *mi, int r, int c) {
     int rows, i, j;
     struct matrix_data *strings = GMatrixEditGet(g, &rows);
 
@@ -3006,7 +3006,7 @@ static void TN_StrIDEnable(GGadget *g,GMenuItem *mi, int r, int c) {
     qsort(mi,i,sizeof(mi[0]),menusort);
 }
 
-static void TN_LangEnable(GGadget *g,GMenuItem *mi, int r, int c) {
+static void TN_LangEnable(GGadget *g,GDMenuItem *mi, int r, int c) {
     int i;
 
     for ( i=0; mi[i].ti.text!=NULL; ++i );
@@ -3114,7 +3114,7 @@ static void TN_PopupMenu(GGadget *g,GEvent *event,int r,int c) {
     struct gfi_data *d = (struct gfi_data *) GGadgetGetUserData(g);
     int rows;
     struct matrix_data *strings = GMatrixEditGet(g, &rows);
-    GMenuItem mi[5];
+    GDMenuItem mi[5];
     int i;
 
     if ( strings==NULL )
@@ -3517,7 +3517,7 @@ static int GFI_GaspVersion(GGadget *g, GEvent *e) {
 return( true );
 }
 
-static void Layers_BackgroundEnable(GGadget *g,GMenuItem *mi, int r, int c) {
+static void Layers_BackgroundEnable(GGadget *g,GDMenuItem *mi, int r, int c) {
     int disable = r<=ly_fore;
     mi[0].ti.disabled = disable;
     mi[1].ti.disabled = disable;
@@ -6803,7 +6803,7 @@ static void AALTCreateNew(SplineFont *sf, struct lkdata *lk) {
     SllkFree(sllk,sllk_cnt);
 }
 
-static void lookupmenu_dispatch(GWindow v, GMenuItem *mi, GEvent *e) {
+static void lookupmenu_dispatch(GWindow v, GDMenuItem *mi, GEvent *e) {
     GEvent dummy;
     struct gfi_data *gfi = GDrawGetUserData(v);
     int i;
@@ -6947,7 +6947,7 @@ return;
     }
 }
 
-static GMenuItem lookuppopupmenu[] = {
+static GDMenuItem lookuppopupmenu[] = {
     { { (unichar_t *) N_("_Top"), NULL, COLOR_DEFAULT, COLOR_DEFAULT, NULL, NULL, 0, 0, 0, 0, 0, 0, 1, 1, 0, 't' }, '\0', ksm_control, NULL, NULL, lookupmenu_dispatch, CID_LookupTop },
     { { (unichar_t *) N_("_Up"), NULL, COLOR_DEFAULT, COLOR_DEFAULT, NULL, NULL, 0, 0, 0, 0, 0, 0, 1, 1, 0, 'C' }, '\0', ksm_control, NULL, NULL, lookupmenu_dispatch, CID_LookupUp },
     { { (unichar_t *) N_("_Down"), NULL, COLOR_DEFAULT, COLOR_DEFAULT, NULL, NULL, 0, 0, 0, 0, 0, 0, 1, 1, 0, 'o' }, '\0', ksm_control, NULL, NULL, lookupmenu_dispatch, CID_LookupDown },

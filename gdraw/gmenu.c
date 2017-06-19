@@ -107,8 +107,8 @@ char* HKTextInfoToUntranslatedText( char* text_untranslated );
 char* HKTextInfoToUntranslatedTextFromTextInfo( GTextInfo* ti );
 
 static void GMenuBarChangeSelection(GMenuBar *mb, int newsel,GEvent *);
-static struct gmenu *GMenuCreateSubMenu(struct gmenu *parent,GMenuItem *mi,int disable);
-static struct gmenu *GMenuCreatePulldownMenu(GMenuBar *mb,GMenuItem *mi, int disabled);
+static struct gmenu *GMenuCreateSubMenu(struct gmenu *parent,GDMenuItem *mi,int disable);
+static struct gmenu *GMenuCreatePulldownMenu(GMenuBar *mb,GDMenuItem *mi, int disabled);
 
 static int menu_grabs=true;
 static struct gmenu *most_recent_popup_menu = NULL;
@@ -162,7 +162,7 @@ typedef struct gmenu {
     int width, height;
     int line_with_mouse;
     int offtop, lcnt, mcnt;
-    GMenuItem *mi;
+    GDMenuItem *mi;
     int fh, as;
     GWindow w;
     GBox *box;
@@ -298,15 +298,15 @@ return;
 
 /*
  * Unused
-static void shorttext(GMenuItem *gi,unichar_t *buf) {
+static void shorttext(GDMenuItem *gi,unichar_t *buf) {
     _shorttext(gi->shortcut,gi->short_mask,buf);
 }
 */
 
-static int GMenuGetMenuPathRecurse( GMenuItem** stack,
-				    GMenuItem *basemi,
-				    GMenuItem *targetmi ) {
-    GMenuItem *mi = basemi;
+static int GMenuGetMenuPathRecurse( GDMenuItem** stack,
+				    GDMenuItem *basemi,
+				    GDMenuItem *targetmi ) {
+    GDMenuItem *mi = basemi;
     int i;
     for ( i=0; mi[i].ti.text || mi[i].ti.text_untranslated || mi[i].ti.image || mi[i].ti.line; ++i ) {
 //	TRACE("text_untranslated: %s\n", mi[i].ti.text_untranslated );
@@ -320,7 +320,7 @@ static int GMenuGetMenuPathRecurse( GMenuItem** stack,
 	}
 	if( mi[i].ti.text ) {
 //	    TRACE("GMenuGetMenuPathRecurse() inspecting %s %p %p\n", u_to_c(mi[i].ti.text),mi[i],targetmi);
-	    GMenuItem* cur = &mi[i];
+	    GDMenuItem* cur = &mi[i];
 	    if( cur == targetmi ) {
 		stack[0] = cur;
 		return 1;
@@ -343,8 +343,8 @@ static int GMenuGetMenuPathRecurse( GMenuItem** stack,
  * Do not free the return value, it is a pointer into a buffer owned
  * by this function.
  */
-static char* GMenuGetMenuPath( GMenuItem *basemi, GMenuItem *targetmi ) {
-    GMenuItem* stack[1024];
+static char* GMenuGetMenuPath( GDMenuItem *basemi, GDMenuItem *targetmi ) {
+    GDMenuItem* stack[1024];
     memset(stack, 0, sizeof(stack));
     if( !targetmi->ti.text )
 	return 0;
@@ -354,7 +354,7 @@ static char* GMenuGetMenuPath( GMenuItem *basemi, GMenuItem *targetmi ) {
 
     /* { */
     /* 	int i=0; */
-    /* 	GMenuItem *mi = basemi; */
+    /* 	GDMenuItem *mi = basemi; */
     /* 	for ( i=0; mi[i].ti.text!=NULL || mi[i].ti.image!=NULL || mi[i].ti.line; ++i ) { */
     /* 	    if( mi[i].ti.text ) { */
     /* 		TRACE("GMenuGetMenuPath() xbase   %s\n", u_to_c(mi[i].ti.text)); */
@@ -363,7 +363,7 @@ static char* GMenuGetMenuPath( GMenuItem *basemi, GMenuItem *targetmi ) {
     /* } */
     /* TRACE("GMenuGetMenuPath() starting...\n"); */
 
-    GMenuItem *mi = basemi;
+    GDMenuItem *mi = basemi;
     int i;
     for ( i=0; mi[i].ti.text!=NULL || mi[i].ti.image!=NULL || mi[i].ti.line; ++i ) {
 	if( mi[i].ti.text ) {
@@ -534,7 +534,7 @@ static GMenuBar * getTopLevelMenubar( struct gmenu *m ) {
 }
 
 
-static int GMenuDrawMenuLine(struct gmenu *m, GMenuItem *mi, int y,GWindow pixmap) {
+static int GMenuDrawMenuLine(struct gmenu *m, GDMenuItem *mi, int y,GWindow pixmap) {
     unichar_t shortbuf[300];
     int as = GTextInfoGetAs(m->w,&mi->ti,m->font);
     int h, width;
@@ -799,7 +799,7 @@ return;
 
 static void GMenuBarChangeSelection(GMenuBar *mb, int newsel,GEvent *event) {
     int old=mb->entry_with_mouse;
-    GMenuItem *mi;
+    GDMenuItem *mi;
 
     if ( old==newsel )
 return;
@@ -1106,8 +1106,8 @@ static char* HKActionPointerPastLeftmostKey( char* action ) {
 
 
 
-static GMenuItem *GMenuSearchActionRecursive( GWindow gw,
-					      GMenuItem *mi,
+static GDMenuItem *GMenuSearchActionRecursive( GWindow gw,
+					      GDMenuItem *mi,
 					      char* action,
 					      GEvent *event,
 					      int call_moveto) {
@@ -1126,7 +1126,7 @@ static GMenuItem *GMenuSearchActionRecursive( GWindow gw,
 		char* subaction = HKActionPointerPastLeftmostKey(action);
 
 //		TRACE("GMenuSearchAction() action:%s decending menu:%s\n", action, u_to_c(mi[i].ti.text) );
-		GMenuItem *ret = GMenuSearchActionRecursive(gw,mi[i].sub,subaction,event,call_moveto);
+		GDMenuItem *ret = GMenuSearchActionRecursive(gw,mi[i].sub,subaction,event,call_moveto);
 		if ( ret!=NULL )
 		    return( ret );
 	    }
@@ -1141,8 +1141,8 @@ static GMenuItem *GMenuSearchActionRecursive( GWindow gw,
     }
 return( NULL );
 }
-static GMenuItem *GMenuSearchAction( GWindow gw,
-				     GMenuItem *mi,
+static GDMenuItem *GMenuSearchAction( GWindow gw,
+				     GDMenuItem *mi,
 				     char* action,
 				     GEvent *event,
 				     int call_moveto) {
@@ -1156,14 +1156,14 @@ static GMenuItem *GMenuSearchAction( GWindow gw,
 	return 0;
     }
     action += prefixlen;
-    GMenuItem * ret = GMenuSearchActionRecursive( gw, mi, action,
+    GDMenuItem * ret = GMenuSearchActionRecursive( gw, mi, action,
 						  event, call_moveto );
     return ret;
 }
 
 
 
-static GMenuItem *GMenuSearchShortcut(GWindow gw, GMenuItem *mi, GEvent *event,
+static GDMenuItem *GMenuSearchShortcut(GWindow gw, GDMenuItem *mi, GEvent *event,
 	int call_moveto) {
     int i;
     unichar_t keysym = event->u.chr.keysym;
@@ -1177,7 +1177,7 @@ static GMenuItem *GMenuSearchShortcut(GWindow gw, GMenuItem *mi, GEvent *event,
 		(menumask&event->u.chr.state)==mi[i].short_mask )
 return( &mi[i]);
 	else if ( mi[i].sub!=NULL ) {
-	    GMenuItem *ret = GMenuSearchShortcut(gw,mi[i].sub,event,call_moveto);
+	    GDMenuItem *ret = GMenuSearchShortcut(gw,mi[i].sub,event,call_moveto);
 	    if ( ret!=NULL )
 return( ret );
 	}
@@ -1309,7 +1309,7 @@ return( false );
 
 static int gmenu_key(struct gmenu *m, GEvent *event) {
     int i;
-    GMenuItem *mi;
+    GDMenuItem *mi;
     GMenu *top;
     unichar_t keysym = event->u.chr.keysym;
 
@@ -1358,7 +1358,7 @@ static int gmenu_destroy(struct gmenu *m) {
     if ( m->donecallback )
 	(m->donecallback)(m->owner);
     if ( m->freemi )
-	GMenuItemArrayFree(m->mi);
+	GDMenuItemArrayFree(m->mi);
     free(m);
 return( true );
 }
@@ -1430,7 +1430,7 @@ return( true );
 
 static GMenu *_GMenu_Create( GMenuBar* toplevel,
 			     GWindow owner,
-			     GMenuItem *mi,
+			     GDMenuItem *mi,
 			     GPoint *where,
 			     int awidth, int aheight,
 			     GFont *font, int disable,
@@ -1607,7 +1607,7 @@ static GMenu *_GMenu_Create( GMenuBar* toplevel,
 return( m );
 }
 
-static GMenu *GMenuCreateSubMenu(GMenu *parent,GMenuItem *mi,int disable) {
+static GMenu *GMenuCreateSubMenu(GMenu *parent,GDMenuItem *mi,int disable) {
     GPoint p;
     GMenu *m;
     char *subMenuName = 0;
@@ -1622,7 +1622,7 @@ static GMenu *GMenuCreateSubMenu(GMenu *parent,GMenuItem *mi,int disable) {
 return( m );
 }
 
-static GMenu *GMenuCreatePulldownMenu(GMenuBar *mb,GMenuItem *mi,int disabled) {
+static GMenu *GMenuCreatePulldownMenu(GMenuBar *mb,GDMenuItem *mi,int disabled) {
     GPoint p;
     GMenu *m;
     char *subMenuName = 0;
@@ -1641,7 +1641,7 @@ static GMenu *GMenuCreatePulldownMenu(GMenuBar *mb,GMenuItem *mi,int disabled) {
 return( m );
 }
 
-GWindow _GMenuCreatePopupMenu( GWindow owner,GEvent *event, GMenuItem *mi,
+GWindow _GMenuCreatePopupMenu( GWindow owner,GEvent *event, GDMenuItem *mi,
 			       void (*donecallback)(GWindow) )
 {
     char *subMenuName = 0;
@@ -1649,7 +1649,7 @@ GWindow _GMenuCreatePopupMenu( GWindow owner,GEvent *event, GMenuItem *mi,
 }
 
 
-GWindow _GMenuCreatePopupMenuWithName( GWindow owner,GEvent *event, GMenuItem *mi,
+GWindow _GMenuCreatePopupMenuWithName( GWindow owner,GEvent *event, GDMenuItem *mi,
 				       char *subMenuName,
 				       void (*donecallback)(GWindow) )
 {
@@ -1663,9 +1663,9 @@ GWindow _GMenuCreatePopupMenuWithName( GWindow owner,GEvent *event, GMenuItem *m
     p.x = event->u.mouse.x;
     p.y = event->u.mouse.y;
     GDrawTranslateCoordinates(owner,GDrawGetRoot(GDrawGetDisplayOfWindow(owner)),&p);
-    m = _GMenu_Create( 0, owner, GMenuItemArrayCopy(mi,NULL), &p,
+    m = _GMenu_Create( 0, owner, GDMenuItemArrayCopy(mi,NULL), &p,
 		       0, 0, menu_font,false, subMenuName );
-    m->any_unmasked_shortcuts = GMenuItemArrayAnyUnmasked(m->mi);
+    m->any_unmasked_shortcuts = GDMenuItemArrayAnyUnmasked(m->mi);
     GDrawPointerUngrab(GDrawGetDisplayOfWindow(owner));
     GDrawPointerGrab(m->w);
     GDrawGetPointerPosition(m->w,&e);
@@ -1677,14 +1677,14 @@ GWindow _GMenuCreatePopupMenuWithName( GWindow owner,GEvent *event, GMenuItem *m
 return( m->w );
 }
 
-GWindow GMenuCreatePopupMenu(GWindow owner,GEvent *event, GMenuItem *mi)
+GWindow GMenuCreatePopupMenu(GWindow owner,GEvent *event, GDMenuItem *mi)
 {
     char* subMenuName = 0;
     return( _GMenuCreatePopupMenuWithName(owner,event,mi,subMenuName,NULL));
 }
 
 GWindow GMenuCreatePopupMenuWithName(GWindow owner,GEvent *event,
-				     char* subMenuName, GMenuItem *mi)
+				     char* subMenuName, GDMenuItem *mi)
 {
     return( _GMenuCreatePopupMenuWithName(owner,event,mi,subMenuName,NULL));
 }
@@ -1947,7 +1947,7 @@ static int GMenuBarCheckHotkey(GWindow top, GGadget *g, GEvent *event) {
 
 	if( !skipkey )
 	{
-	    GMenuItem *mi = GMenuSearchAction(mb->g.base,mb->mi,hk->action,event,mb->child==NULL);
+	    GDMenuItem *mi = GMenuSearchAction(mb->g.base,mb->mi,hk->action,event,mb->child==NULL);
 	    if ( mi )
 	    {
 //		TRACE("GMenuBarCheckKey(x) have mi... :%p\n", mi );
@@ -2161,7 +2161,7 @@ return;
 	GDrawSync(NULL);
 	GDrawProcessPendingEvents(NULL);	/* popup's destroy routine must execute before we die */
     }
-    GMenuItemArrayFree(mb->mi);
+    GDMenuItemArrayFree(mb->mi);
     free(mb->xs);
     _ggadget_destroy(g);
 }
@@ -2185,7 +2185,7 @@ static void GMenuBarTestSize(GMenuBar *mb) {
     } else {
 	for ( i=mb->mtot-1; i>0 && mb->xs[i]>mb->g.inner.width-arrow_size; --i );
 	mb->lastmi = i;
-	memset(&mb->fake,0,sizeof(GMenuItem));
+	memset(&mb->fake,0,sizeof(GDMenuItem));
 	mb->fake[0].sub = mb->mi+mb->lastmi;
     }
 }
@@ -2277,8 +2277,8 @@ static void GMenuBarFindXs(GMenuBar *mb) {
     GMenuBarTestSize(mb);
 }
 
-static void MenuMaskInit(GMenuItem *mi) {
-    int mask = GMenuItemArrayMask(mi);
+static void MenuMaskInit(GDMenuItem *mi) {
+    int mask = GDMenuItemArrayMask(mi);
     if ( mask_set )
 	menumask |= mask;
     else {
@@ -2295,7 +2295,7 @@ GGadget *GMenuBarCreate(struct gwindow *base, GGadgetData *gd,void *data) {
     mb->g.funcs = &gmenubar_funcs;
     _GGadget_Create(&mb->g,base,gd,data,&menubar_box);
 
-    mb->mi = GMenuItemArrayCopy(gd->u.menu,&mb->mtot);
+    mb->mi = GDMenuItemArrayCopy(gd->u.menu,&mb->mtot);
     mb->xs = malloc((mb->mtot+1)*sizeof(uint16));
     mb->entry_with_mouse = -1;
     mb->font = menubar_font;
@@ -2304,7 +2304,7 @@ GGadget *GMenuBarCreate(struct gwindow *base, GGadgetData *gd,void *data) {
     GMenuBarFindXs(mb);
 
     MenuMaskInit(mb->mi);
-    mb->any_unmasked_shortcuts = GMenuItemArrayAnyUnmasked(mb->mi);
+    mb->any_unmasked_shortcuts = GDMenuItemArrayAnyUnmasked(mb->mi);
 
     if ( gd->flags & gg_group_end )
 	_GGadgetCloseGroup(&mb->g);
@@ -2322,7 +2322,7 @@ GGadget *GMenu2BarCreate(struct gwindow *base, GGadgetData *gd,void *data) {
     mb->g.funcs = &gmenubar_funcs;
     _GGadget_Create(&mb->g,base,gd,data,&menubar_box);
 
-    mb->mi = GMenuItem2ArrayCopy(gd->u.menu2,&mb->mtot);
+    mb->mi = GDMenuItem2ArrayCopy(gd->u.menu2,&mb->mtot);
     mb->xs = malloc((mb->mtot+1)*sizeof(uint16));
     mb->entry_with_mouse = -1;
     mb->font = menubar_font;
@@ -2331,7 +2331,7 @@ GGadget *GMenu2BarCreate(struct gwindow *base, GGadgetData *gd,void *data) {
     GMenuBarFindXs(mb);
 
     MenuMaskInit(mb->mi);
-    mb->any_unmasked_shortcuts = GMenuItemArrayAnyUnmasked(mb->mi);
+    mb->any_unmasked_shortcuts = GDMenuItemArrayAnyUnmasked(mb->mi);
 
     if ( gd->flags & gg_group_end )
 	_GGadgetCloseGroup(&mb->g);
@@ -2342,9 +2342,9 @@ return( &mb->g );
 }
 
 /* ************************************************************************** */
-static GMenuItem *GMenuBarFindMid(GMenuItem *mi, int mid) {
+static GDMenuItem *GMenuBarFindMid(GDMenuItem *mi, int mid) {
     int i;
-    GMenuItem *ret;
+    GDMenuItem *ret;
 
     for ( i=0; mi[i].ti.text!=NULL || mi[i].ti.image!=NULL || mi[i].ti.line; ++i ) {
 	if ( mi[i].mid == mid )
@@ -2360,7 +2360,7 @@ return( NULL );
 
 void GMenuBarSetItemChecked(GGadget *g, int mid, int check) {
     GMenuBar *mb = (GMenuBar *) g;
-    GMenuItem *item;
+    GDMenuItem *item;
 
     item = GMenuBarFindMid(mb->mi,mid);
     if ( item!=NULL )
@@ -2369,7 +2369,7 @@ void GMenuBarSetItemChecked(GGadget *g, int mid, int check) {
 
 void GMenuBarSetItemEnabled(GGadget *g, int mid, int enabled) {
     GMenuBar *mb = (GMenuBar *) g;
-    GMenuItem *item;
+    GDMenuItem *item;
 
     item = GMenuBarFindMid(mb->mi,mid);
     if ( item!=NULL )
@@ -2378,7 +2378,7 @@ void GMenuBarSetItemEnabled(GGadget *g, int mid, int enabled) {
 
 void GMenuBarSetItemName(GGadget *g, int mid, const unichar_t *name) {
     GMenuBar *mb = (GMenuBar *) g;
-    GMenuItem *item;
+    GDMenuItem *item;
 
     item = GMenuBarFindMid(mb->mi,mid);
     if ( item!=NULL ) {
@@ -2390,7 +2390,7 @@ void GMenuBarSetItemName(GGadget *g, int mid, const unichar_t *name) {
 /* Check to see if event matches the given shortcut, expressed in our standard*/
 /*  syntax and subject to gettext translation */
 int GMenuIsCommand(GEvent *event,char *shortcut) {
-    GMenuItem foo;
+    GDMenuItem foo;
     unichar_t keysym = event->u.chr.keysym;
 
     if ( event->type!=et_char )
@@ -2401,7 +2401,7 @@ return( false );
 
     memset(&foo,0,sizeof(foo));
 
-    GMenuItemParseShortCut(&foo,shortcut);
+    GDMenuItemParseShortCut(&foo,shortcut);
 
 return( (menumask&event->u.chr.state)==foo.short_mask && foo.shortcut == keysym );
 }

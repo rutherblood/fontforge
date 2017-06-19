@@ -333,7 +333,7 @@ typedef struct gnumericfield {
 
 typedef struct gmenubar {
     GGadget g;
-    GMenuItem *mi;
+    GDMenuItem *mi;
     uint16 *xs;			/* locations at which to draw each name (+1 to give us width of last one) */
     uint16 mtot;
     int16 entry_with_mouse;
@@ -343,7 +343,7 @@ typedef struct gmenubar {
     unsigned int initial_press: 1;
     unsigned int any_unmasked_shortcuts: 1;
     FontInstance *font;
-    GMenuItem fake[2];		/* Used if not enough room for menu... */
+    GDMenuItem fake[2];		/* Used if not enough room for menu... */
 } GMenuBar;
 
 struct tabs { unichar_t *name; int16 x, width, tw, nesting; unsigned int disabled: 1; GWindow w; };
@@ -416,8 +416,8 @@ typedef struct ghvbox {
 struct col_data {
     enum me_type me_type;
     char *(*func)(GGadget *,int r,int c); /* Produces a string to display if md_str==NULL */
-    GMenuItem *enum_vals;
-    void (*enable_enum)(GGadget *,GMenuItem *, int r, int c);
+    GDMenuItem *enum_vals;
+    void (*enable_enum)(GGadget *,GDMenuItem *, int r, int c);
     GTextCompletionHandler completer;
     char *title;
     int16 width, x;			/* Relative to inner.x */
@@ -565,8 +565,8 @@ extern GTextInfo **GTextInfoArrayFromList(GTextInfo *ti, uint16 *cnt);
 extern GTextInfo **GTextInfoArrayCopy(GTextInfo **ti);
 extern int GTextInfoArrayCount(GTextInfo **ti);
 extern int GTextInfoCompare(GTextInfo *ti1, GTextInfo *ti2);
-extern int GMenuItemArrayMask(GMenuItem *mi);
-extern int GMenuItemArrayAnyUnmasked(GMenuItem *mi);
+extern int GDMenuItemArrayMask(GDMenuItem *mi);
+extern int GDMenuItemArrayAnyUnmasked(GDMenuItem *mi);
 
 extern GGadget *_GGadget_Create(GGadget *g, struct gwindow *base, GGadgetData *gd,void *data, GBox *def);
 extern void _GGadget_FinalPosition(GGadget *g, struct gwindow *base, GGadgetData *gd);

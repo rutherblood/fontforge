@@ -74,7 +74,7 @@ static struct python_menu_info {
 static int cvpy_menu_cnt=0, cvpy_menu_max = 0;
 static int fvpy_menu_cnt=0, fvpy_menu_max = 0;
 
-GMenuItem2 *cvpy_menu, *fvpy_menu;
+GDMenuItem2 *cvpy_menu, *fvpy_menu;
 
 static void py_tllistcheck(struct gmenuitem *mi,PyObject *owner,
 	struct python_menu_info *menu_data, int menu_cnt) {
@@ -229,11 +229,11 @@ return( fvpy_menu_cnt++ );
     }
 }
 
-static void InsertSubMenus(PyObject *args,GMenuItem2 **mn, int is_cv) {
+static void InsertSubMenus(PyObject *args,GDMenuItem2 **mn, int is_cv) {
     int i, j, cnt;
     PyObject *func, *check, *data;
     char *shortcut_str;
-    GMenuItem2 *mmn;
+    GDMenuItem2 *mmn;
 
     /* I've done type checking already */
     cnt = PyTuple_Size(args);
@@ -267,8 +267,8 @@ static void InsertSubMenus(PyObject *args,GMenuItem2 **mn, int is_cv) {
 	    }
 	}
 	if ( *mn==NULL || (*mn)[j].ti.text==NULL ) {
-	    *mn = realloc(*mn,(j+2)*sizeof(GMenuItem2));
-	    memset(*mn+j,0,2*sizeof(GMenuItem2));
+	    *mn = realloc(*mn,(j+2)*sizeof(GDMenuItem2));
+	    memset(*mn+j,0,2*sizeof(GDMenuItem2));
 	}
 	mmn = *mn;
 	if ( mmn[j].ti.text==NULL ) {
@@ -569,13 +569,13 @@ static PyObject *PyFFFont_CollabSessionSetUpdatedCallback(PyFF_Font *self, PyObj
 
 #ifdef FONTFORGE_CAN_USE_GTK
 
-#define GMenuItem GMenuItem_Glib
+#define GDMenuItem GDMenuItem_Glib
 #define GTimer GTimer_GTK
 #define GList  GList_Glib
 #include <gdk/gdkx.h>
 #undef GTimer
 #undef GList
-#undef GMenuItem
+#undef GDMenuItem
 
 
 static void GtkWindowToMainEventLoop_fd_callback( int fd, void* datas )
