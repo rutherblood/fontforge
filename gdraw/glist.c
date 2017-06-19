@@ -972,7 +972,7 @@ static GResInfo glist_ri = {
     NULL,
     N_("List"),
     N_("List"),
-    "GDList",
+    "GList",
     "Gdraw",
     false,
     box_foreground_border_outer,
@@ -986,7 +986,7 @@ static GResInfo glist_ri = {
 static void GDListInit() {
     _GGadgetCopyDefaultBox(&list_box);
     list_box.flags |= box_foreground_border_outer;
-    list_font = _GGadgetInitDefaultBox("GDList.",&list_box,NULL);
+    list_font = _GGadgetInitDefaultBox("GList.",&list_box,NULL);
     glist_inited = true;
 }
 

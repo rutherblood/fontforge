@@ -142,7 +142,7 @@ GResInfo listmark_ri = {
     N_("List Mark"),
     N_("This is the mark that differentiates ComboBoxes and ListButtons\n"
 	"from TextFields and normal Buttons." ),
-    "GDListMark",
+    "GListMark",
     "Gdraw",
     false,
     omf_border_width|omf_padding,
@@ -434,10 +434,10 @@ void GGadgetInit(void) {
 	_GGadgetCopyDefaultBox(&_GDListMark_Box);
 	_GDListMark_Box.border_width = _GDListMark_Box.padding = 1;
 	/*_GDListMark_Box.flags = 0;*/
-	_GGadgetInitDefaultBox("GDListMark.",&_GDListMark_Box,NULL);
-	_GDListMarkSize = GResourceFindInt("GDListMark.Width", _GDListMarkSize);
-	_GDListMark_Image = GGadgetResourceFindImage("GDListMark.Image", NULL);
-	_GDListMark_DisImage = GGadgetResourceFindImage("GDListMark.DisabledImage", NULL);
+	_GGadgetInitDefaultBox("GListMark.",&_GDListMark_Box,NULL);
+	_GDListMarkSize = GResourceFindInt("GListMark.Width", _GDListMarkSize);
+	_GDListMark_Image = GGadgetResourceFindImage("GListMark.Image", NULL);
+	_GDListMark_DisImage = GGadgetResourceFindImage("GListMark.DisabledImage", NULL);
 	if ( _GDListMark_Image!=NULL && _GDListMark_Image->image!=NULL ) {
 	    int size = GDrawPixelsToPoints(NULL,GImageGetWidth(_GDListMark_Image->image));
 	    if ( size>_GDListMarkSize )
