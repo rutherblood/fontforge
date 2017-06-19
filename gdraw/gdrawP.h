@@ -273,8 +273,8 @@ struct displayfuncs {
     void (*postDragEvent)(GWindow w,GEvent *mouse,enum event_type et);
     int  (*requestDeviceEvents)(GWindow w,int devcnt,struct gdeveventmask *de);
 
-    GTimer *(*requestTimer)(GWindow w,int32 time_from_now,int32 frequency, void *userdata);
-    void (*cancelTimer)(GTimer *timer);
+    GDTimer *(*requestTimer)(GWindow w,int32 time_from_now,int32 frequency, void *userdata);
+    void (*cancelTimer)(GDTimer *timer);
 
     void (*syncThread)(GDisplay *gd, void (*func)(void *), void *data);
 

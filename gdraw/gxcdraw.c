@@ -826,12 +826,12 @@ return(false);
 /* ***************************** Pango Library ****************************** */
 /* ************************************************************************** */
 
-#  define GTimer GTimer_GTK
+#  define GDTimer GTimer_GTK
 #  include <pango/pangoxft.h>
 #  if !defined(_NO_LIBCAIRO)
 #   include <pango/pangocairo.h>
 #  endif
-#  undef GTimer
+#  undef GDTimer
 
 /* ************************************************************************** */
 /* ****************************** Pango Render ****************************** */

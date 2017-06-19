@@ -69,7 +69,7 @@ static struct inschr {
     unsigned int flash: 1;
     int as,sas;
     short x,y;
-    GTimer *flash_time;
+    GDTimer *flash_time;
     GFont *font;
     GFont *smallfont;
 } inschr = {

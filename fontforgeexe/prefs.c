@@ -55,9 +55,9 @@
 # include <langinfo.h>
 #endif
 
-#define GTimer GTimer_GTK
+#define GDTimer GTimer_GTK
 #include <glib.h>
-#undef GTimer
+#undef GDTimer
 
 #include "collabclient.h"
 

@@ -300,7 +300,7 @@ typedef struct gxdisplay /* : GDisplay */ {
     Pixmap fence_stipple;
     int32 mycontext;
     int16 top_window_count;
-    GTimer *timers;
+    GDTimer *timers;
     Time last_event_time;
     struct gxselinfo selinfo[sn_max];
     int amax, alen;

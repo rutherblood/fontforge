@@ -280,12 +280,12 @@ static void PSDrawRequestExpose(GWindow UNUSED(gw), GRect *UNUSED(rect),
     /* Not meaningful */
 }
 
-static GTimer *PSDrawRequestTimer(GWindow UNUSED(w), int32 UNUSED(time_from_now),
+static GDTimer *PSDrawRequestTimer(GWindow UNUSED(w), int32 UNUSED(time_from_now),
         int32 UNUSED(frequency), void *UNUSED(userdata)) {
 return( NULL );
 }
 
-static void PSDrawCancelTimer(GTimer *UNUSED(timer)) {
+static void PSDrawCancelTimer(GDTimer *UNUSED(timer)) {
 }
 
 static void PSDrawSyncThread(GDisplay *UNUSED(gdisp), void (*func)(void *), void *data) {

@@ -57,10 +57,10 @@ extern uninm_blocks_db blocks_db;
 #include "gutils/prefs.h"
 
 
-#define GTimer GTimer_GTK
+#define GDTimer GTimer_GTK
 #include <glib.h>
 #include <glib-object.h>
-#undef GTimer
+#undef GDTimer
 
 #ifdef __Mac
 extern void setup_cocoa_app();
@@ -211,7 +211,7 @@ static void InsCharHook(GDisplay *gd,unichar_t ch) {
 
 extern GImage splashimage;
 static GWindow splashw;
-static GTimer *autosave_timer, *splasht;
+static GDTimer *autosave_timer, *splasht;
 static GFont *splash_font, *splash_italic;
 static int as,fh, linecnt;
 static unichar_t msg[470];
@@ -306,7 +306,7 @@ void DelayEvent(void (*func)(void *), void *data) {
 }
 
 static void DoDelayedEvents(GEvent *event) {
-    GTimer *t = event->u.timer.timer;
+    GDTimer *t = event->u.timer.timer;
     struct delayed_event *info = (struct delayed_event *) (event->u.timer.userdata);
 
     if ( info!=NULL ) {
@@ -326,7 +326,7 @@ struct argsstruct {
 static void SendNextArg(struct argsstruct *args) {
     int i;
     char *msg;
-    static GTimer *timeout;
+    static GDTimer *timeout;
 
     if ( timeout!=NULL ) {
 	GDrawCancelTimer(timeout);

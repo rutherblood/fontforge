@@ -237,7 +237,7 @@ typedef struct gscrollbar {		/* and slider */
     int16 arrowsize;		
     int16 thumbsize;		/* Current thumb size, refigured after every call to setbounds */
     int16 thumbpos;		/* Current thumb pos */
-    GTimer *pressed;
+    GDTimer *pressed;
     GBox *thumbbox;
 } GScrollBar;
 
@@ -263,8 +263,8 @@ typedef struct glist {
     unsigned int sameheight: 1;		/* all lines are the same height */
     unsigned int always_show_sb: 1;	/* display scrollbar even if we don't need it */
     unichar_t *sofar;			/* user input */
-    GTimer *enduser;
-    GTimer *pressed;
+    GDTimer *enduser;
+    GDTimer *pressed;
     void (*popup_callback)(GGadget *g,int pos);
 } GDList;
 
@@ -297,15 +297,15 @@ typedef struct gtextfield {
     int16 dd_cursor_pos;
     unichar_t *text, *oldtext;
     FontInstance *font;
-    GTimer *pressed;
-    GTimer *cursor;
+    GDTimer *pressed;
+    GDTimer *cursor;
     GCursor old_cursor;
     GScrollBar *hsb, *vsb;
     int16 lcnt, lmax;
     int32 *lines;		/* offsets in text to the start of the nth line */
     int16 xmax;
     GIC *gic;
-    GTimer *numeric_scroll;
+    GDTimer *numeric_scroll;
     char *utf8_text;		/* For Pango */
     int32 *lines8;		/* offsets in utf8_text */
 } GTextField;

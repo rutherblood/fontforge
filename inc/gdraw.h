@@ -81,7 +81,7 @@ typedef struct gtextbounds {
 enum selnames { sn_primary, sn_clipboard, sn_drag_and_drop, sn_user1, sn_user2, sn_max };
 typedef struct gwindow *GWindow;
 typedef struct gdisplay GDisplay;
-typedef struct gtimer GTimer;
+typedef struct gtimer GDTimer;
 
 enum keystate_mask { ksm_shift=1, ksm_capslock=2, ksm_control=4, ksm_meta=8,
 	ksm_cmdsuse=0x8,
@@ -189,7 +189,7 @@ typedef struct gevent {
 	    int32 x,y;
 	} drag_drop;
 	struct {
-	    GTimer *timer;
+	    GDTimer *timer;
 	    void *userdata;
 	} timer;
 	struct {
@@ -472,9 +472,9 @@ extern void GDrawEventLoop(GDisplay *disp);
 extern void GDrawPostEvent(GEvent *e);
 extern void GDrawPostDragEvent(GWindow gw,GEvent *e,enum event_type);
 
-extern GTimer *GDrawRequestTimer(GWindow w,int32 time_from_now,int32 frequency,
+extern GDTimer *GDrawRequestTimer(GWindow w,int32 time_from_now,int32 frequency,
 	void *userdata);
-extern void GDrawCancelTimer(GTimer *timer);
+extern void GDrawCancelTimer(GDTimer *timer);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -508,7 +508,7 @@ typedef struct BackgroundTimerstruct
     GWindow w;
 
     // the GDraw timer associated with the above window
-    GTimer* timer;
+    GDTimer* timer;
 
     // how often to fire the timer
     int32 BackgroundTimerMS;
