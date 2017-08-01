@@ -485,6 +485,33 @@ static int pdf_skip_brackets(FILE *stream, char *tokbuf) {
     return( ret && ch=='>' );
 }
 
+static int pdf_skip_range_brackets(FILE *stream, char *tokbuf,int* range_type) {
+    char *pt=tokbuf, *end=tokbuf+300-2;
+    int ch, ret;
+    
+    while(isspace(ch = getc(stream))) ;
+    if(ch != '[' && ch != '<') return 0;
+    
+    if(ch == '[') {
+        *range_type = 1;
+        ch = getc(stream);
+        while(ch>=0 && ch!=']') {
+            if(ch == '[') return -1;
+            if(pt<end) *pt++ = ch;
+            ch = getc(stream);
+        }
+        *pt = '\0';
+        return ch == ']';
+    }
+    else if(ch == '<') {
+        ungetc(ch,stream);
+        *range_type = 0;
+        return pdf_skip_brackets(stream,tokbuf);
+    }
+    
+    return -1;
+}
+
 static FILE *pdf_defilterstream(struct pdfcontext *pc);
 static int pdf_getinteger(char *pt,struct pdfcontext *pc);
 
@@ -1762,7 +1789,7 @@ static void pdf_getcmap(struct pdfcontext *pc, SplineFont *basesf, int font_num)
     FILE *file;
     int i, j, gid, start, end, uni, cur=0, nuni, nhex, nchars, lo, *uvals;
     long *mappings = NULL;
-    char tok[200], *ccval, prevtok[200]="";
+    char tok[500], *ccval, prevtok[500]="";
     SplineFont *sf = basesf->subfontcnt > 0 ? basesf->subfonts[0] : basesf;
 
     if ( !pdf_findobject(pc,pc->cmapobjs[font_num]) || !pdf_readdict(pc) )
@@ -1810,33 +1837,88 @@ return;
   goto fail;
 	} else if ( strcmp(tok,"beginbfrange") == 0 && sscanf(prevtok,"%d",&nchars)) {
 	    for (i=0; i<nchars; i++) {
+            int range_type;
 		if (pdf_skip_brackets(file,tok) >= 0 && sscanf(tok,"%x",&start) &&
 		    pdf_skip_brackets(file,tok) >= 0 && sscanf(tok,"%x",&end) &&
-		    pdf_skip_brackets(file,tok) >= 0 && sscanf(tok,"%lx",&mappings[cur])) {
+		    pdf_skip_range_brackets(file,tok,&range_type) >= 0) {
+            
+            if(range_type == 0) {
+                if(!sscanf(tok,"%lx",&mappings[cur]))
+                    goto fail;
+                uvals = calloc(1,sizeof(int));
+                sscanf(tok,"%4x", &uni);
+                /* For CMap values defining a character range we assume they should always */
+                /* correspond to a single Unicode character (either a BMP character or a surrogate pair) */
+                if (strlen(tok) >= 8) {
+                sscanf(tok+4,"%4x", &lo);
+                if (uni >= 0xD800 && uni <= 0xDBFF && lo >= 0xDC00 && lo <= 0xDFFF )
+                    uni = 0x10000 + (uni - 0xD800) * 0x400 + (lo - 0xDC00);
+                }
 
-		    uvals = calloc(1,sizeof(int));
-		    sscanf(tok,"%4x", &uni);
-		    /* For CMap values defining a character range we assume they should always */
-		    /* correspond to a single Unicode character (either a BMP character or a surrogate pair) */
-		    if (strlen(tok) >= 8) {
-			sscanf(tok+4,"%4x", &lo);
-			if (uni >= 0xD800 && uni <= 0xDBFF && lo >= 0xDC00 && lo <= 0xDFFF )
-			    uni = 0x10000 + (uni - 0xD800) * 0x400 + (lo - 0xDC00);
-		    }
-
-		    for (gid=start; gid<=end; gid++) {
-			mappings[cur] = uvals[0] = uni++;
-			add_mapping(basesf, mappings, uvals, 1, gid, pc->cmap_from_cid[font_num], cur);
-			cur++;
-		    }
-		    free(uvals);
+                for (gid=start; gid<=end; gid++) {
+                mappings[cur] = uvals[0] = uni++;
+                add_mapping(basesf, mappings, uvals, 1, gid, pc->cmap_from_cid[font_num], cur);
+                cur++;
+                }
+                free(uvals);
+            }
+            else if(range_type == 1) {
+                int codecount = 0,c,inhex = 0;
+                char **unitok = (char **)malloc((end-start+1)*sizeof(char*));
+                if(unitok == NULL) goto fail;
+                for(c = 0;c<end-start+1;c++) {
+                    unitok[c] = (char*)malloc(200*sizeof(char));
+                    if(unitok[c] == NULL) goto fail;
+                }
+                int sparstart = 0, sparend = 0;
+                for(c = 0;c<strlen(tok);c++) {
+                    if(isspace(tok[c])) continue;
+                    if(tok[c] == '<') {
+                        sparstart = sparend = c;
+                        if(!inhex) inhex = 1;
+                        else goto fail;
+                    }
+                    else if(tok[c] == '>') {
+                        strncpy(unitok[codecount],tok+sparstart+1,sparend-sparstart);
+                        unitok[codecount++][sparend-sparstart] = '\0';
+                        if(inhex) inhex = 0;
+                        else goto fail;
+                    }
+                    else if(inhex) sparend++;
+                }
+                if(codecount != end-start+1) goto fail;
+                
+                for(gid = start, c = 0;gid<=end;gid++,c++) {
+                    nhex = strlen(unitok[c])/4;
+                    nuni = 1;
+                    uvals = (int *)malloc(nhex*sizeof(int));
+                    if(uvals == NULL) goto fail;
+                    sscanf(unitok[c],"%4x",&uvals[0]);
+                    ccval = unitok[c] + 4;
+                    
+                    for(j = 1;j<nhex && strlen(ccval) >= 4;j++) {
+                        sscanf(ccval,"%4x",&lo);
+                        if (uvals[nuni-1] >= 0xD800 && uvals[nuni-1] <= 0xDBFF && lo >= 0xDC00 && lo <= 0xDFFF )
+                            uvals[nuni-1] = 0x10000 + (uvals[nuni-1] - 0xD800) * 0x400 + (lo - 0xDC00);
+                        else uvals[nuni++] = lo;
+                        ccval += 4;
+                    }
+                    mappings[cur] = uvals[0];
+                    add_mapping(basesf, mappings, uvals, nuni, gid, pc->cmap_from_cid[font_num], cur);
+                    cur++;
+                    free(uvals);
+                }
+                for(c = 0;c<end-start+1;c++)
+                    free(unitok[c]);
+                free(unitok);
+            }
 		} else
   goto fail;
 	    }
 	    if ( pdf_getprotectedtok(file,tok) <= 0 || strcmp(tok,"endbfrange") != 0 )
   goto fail;
 	} else
-	    memcpy(prevtok,tok,200);
+	    memcpy(prevtok,tok,500);
     }
     fclose(file);
     /* If this is not a cid font, then regenerate the font encoding (so that it is no */
